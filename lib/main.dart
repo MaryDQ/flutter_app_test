@@ -27,6 +27,7 @@ class MyApp extends StatelessWidget {
 
     return new MaterialApp(
       title: '无限滚动ListView',
+      theme: new ThemeData(primaryColor: Colors.yellow),
       home: new RandomWords(),
     );
   }
@@ -43,13 +44,44 @@ class RandomWordsState extends State<RandomWords> {
 
   final Set _saved = new Set<WordPair>();
 
+  void _pushSaved() {
+    Navigator.of(context).push(new MaterialPageRoute(builder: (context) {
+      final tiles = _saved.map((pair) {
+        return new ListTile(
+          title: new Text(
+            pair.asPascalCase,
+            style: _biggerFont,
+          ),
+        );
+      });
+      final divided =
+          ListTile.divideTiles(tiles: tiles, context: context).toList();
+
+      return new Scaffold(
+        appBar: new AppBar(
+          title: new Text("saved Suggestions"),
+        ),
+        body: new ListView(
+          children: divided,
+        ),
+      );
+    }));
+  }
+
   @override
   Widget build(BuildContext context) {
 //    final wordPair = new WordPair.random();
 //    return new Text(wordPair.asPascalCase);
     return new Scaffold(
-      appBar:
-          new AppBar(title: new Text("这是一个无限滚动的ListView"), centerTitle: true),
+      appBar: new AppBar(
+        title: new Text(
+          "这是一个无限滚动的ListView",
+        ),
+        centerTitle: true,
+        actions: <Widget>[
+          new IconButton(icon: new Icon(Icons.list), onPressed: _pushSaved)
+        ],
+      ),
       body: _buildSuggestions(),
     );
   }
